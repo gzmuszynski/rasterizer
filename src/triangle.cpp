@@ -1,29 +1,27 @@
 #include "triangle.h"
 
-triangle::triangle(vec3 p1, vec3 p2, vec3 p3, unsigned int color):
-    p1(p1),
-    p2(p2),
-    p3(p3),
-    color(color)
+
+hit triangle::intersection(float x, float y)
 {
+    hit value = {false, {0.0f, 0.0f, 0.0f} };
 
-}
+    float AB = (x - A.x) * (B.y - A.y) - (B.x - A.x) * (y - A.y); // P1, P2, P
+    float BC = (x - B.x) * (C.y - B.y) - (C.x - B.x) * (y - B.y); // P2, P3, P
+    float CA = (x - C.x) * (A.y - C.y) - (A.x - C.x) * (y - C.y); // P3, P1, P
 
-bool triangle::intersection(float x, float y)
-{
-
-    float e1 = (x - p2.x) * (p1.y - p2.y) - (p1.x - p2.x) * (y - p2.y);
-    float e2 = (x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (y - p3.y);
-    float e3 = (x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (y - p1.y);
-
-    if( e1 > 0 && e2 > 0 && e3 > 0)
+    value.isHit = AB > 0 && BC > 0 && CA > 0;
+    if( value.isHit )
     {
-        return true;
+        float Area = 1.0/((C.x - A.x) * (B.y - A.y) - (B.x - A.x) * (C.y - A.y));
+        value.areas.x = BC*Area;
+        value.areas.y = CA*Area;
+        value.areas.z = AB*Area;
+
     }
-    return false;
+    return value;
 }
 
-vec3 triangle::intersection(vec3 point)
-{
-    return {0.0,0.0,0.0};
-}
+//bool edgeFunction(const Vec2f &a, const Vec3f &b, const Vec2f &c)
+//{
+//return ((c.x - a.x) * (b.y - a.y) - (b.x - a.x) * (c.y - a.y)>= 0);
+//}

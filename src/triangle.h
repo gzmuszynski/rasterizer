@@ -1,20 +1,39 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
-struct vec3
+#include "color.h"
+
+/*        C
+ *       /\
+ *      /  \
+ *  AC /    \ BC
+ *    /      \
+ *   /________\
+ *  A    AB    B
+ */
+
+
+struct float3
 {
     float x,y,z;
 };
 
+struct hit{
+    bool isHit;
+    float3 areas;
+};
+
 struct triangle
 {
-    triangle(vec3 p1, vec3 p2, vec3 p3, unsigned int color);
-    vec3 p1,p2,p3;
+    float3 A,B,C;
 
-    unsigned int color = 0x000000;
+    color colA;
+    color colB;
+    color colC;
 
-    bool intersection(float x, float y);
-    vec3 intersection(vec3 point);
+    hit intersection(float x, float y);
 };
+
+
 
 #endif // TRIANGLE_H

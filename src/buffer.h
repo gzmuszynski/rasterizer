@@ -1,12 +1,13 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
+#include "color.h"
 
 struct buffer
 {
     int width, height;
 
-    unsigned int* color;
+    color* diffuse;
     float* depth;
 
     void clear();
@@ -15,7 +16,7 @@ struct buffer
 
     void initBuffer(int width, int height);
 
-    void write(int x, int y, unsigned int color, float depth);
+    void write(int x, int y, color diffuse, float depth);
 };
 
 #endif // BUFFER_H

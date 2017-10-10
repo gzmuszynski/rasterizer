@@ -4,7 +4,7 @@ void buffer::clear()
 {
     for(int x = 0; x < width; x++){
         for(int y = 0; y < height; y++){
-            color[(width*y)+x] = 0x00000000;
+            diffuse[(width*y)+x] = 0x00000000;
             depth[(width*y)+x] = 0;
         }
     }
@@ -14,7 +14,7 @@ void buffer::clearColor()
 {
     for(int x = 0; x < width; x++){
         for(int y = 0; y < height; y++){
-            color[(width*y)+x] = 0x00000000;
+            diffuse[(width*y)+x] = 0x00000000;
         }
     }
 
@@ -33,12 +33,12 @@ void buffer::initBuffer(int width, int height){
     this->width = width;
     this->height = height;
 
-    color = new unsigned int[width*height];
+    diffuse = new color[width*height];
     depth = new float[width*height];
     clear();
 }
 
-void buffer::write(int x, int y, unsigned int color, float depth){
-    this->color[(width*y)+x] = color;
+void buffer::write(int x, int y, color diffuse, float depth){
+    this->diffuse[(width*y)+x] = diffuse;
     this->depth[(width*y)+x] = depth;
 }

@@ -1,9 +1,8 @@
 #include "scanline.h"
-#include "triangle.h"
-#include "buffer.h"
 #include "serializer.h"
 #include <iostream>
 #include <stdio.h>
+#include <vector>
 
 scanline::scanline(int width, int height)
 {
@@ -17,40 +16,65 @@ void scanline::render()
         float stepx = 1.0/buf.width;
         float stepy = 1.0/buf.height;
 
-        // define CCW triangle
+        // define CW triangle
 
-        triangle tri ( { 0.0, 0.0, 0.0 },
-                       { 1.0, 0.0, 0.0 },
-                       { 0.5, 1.0, 0.0 },
-                       0xFF336699 ); // ARGB
+        std::vector<triangle> triangles;
+        triangle tri1 = { { 0.0f, 0.0f, 1.0f },
+                          { 0.5f, 1.0f, 0.5f },
+                          { 1.0f, 0.5f, 0.0f },
+                          0xFFFF0000,
+                          0xFF00FF00,
+                          0xFF0000FF }; // ARGB
 
+        triangle tri2 { { 0.4f, 0.4f, 0.0f },
+                        { 0.5f, 0.6f, 0.5f },
+                        { 0.6f, 0.4f, 1.0f },
+                        0xFF996699 ,
+                        0xFF996699 ,
+                        0xFF996699 }; // ARGB
 
-        // min-max for basic rendertime saving
+        triangles.push_back(tri1);
+        triangles.push_back(tri2);
 
-        float maxx, minx, maxy, miny;
-
-        maxx = (tri.p1.x > tri.p2.x )? tri.p1.x : tri.p2.x;
-        maxx = (maxx     > tri.p3.x )? maxx     : tri.p3.x;
-
-        minx = (tri.p1.x < tri.p2.x )? tri.p1.x : tri.p2.x;
-        minx = (minx     < tri.p3.x )? minx     : tri.p3.x;
-
-        maxy = (tri.p1.y > tri.p2.y )? tri.p1.y : tri.p2.y;
-        maxy = (maxy     > tri.p3.y )? maxy     : tri.p3.y;
-
-        miny = (tri.p1.y < tri.p2.y )? tri.p1.y : tri.p2.y;
-        miny = (miny     < tri.p3.y )? miny     : tri.p3.y;
-
-        // check for intersection
-
-        for(float x = minx * buf.width; x < maxx * buf.width; x++)
+        for(int i = 0; i < triangles.size(); i++)
         {
-            for(float y = miny * buf.height; y < maxy * buf.height; y++)
+
+            triangle tri = triangles[i];
+            // min-max for basic rendertime saving
+
+            float maxx, minx, maxy, miny;
+
+            maxx = (tri.A.x > tri.B.x )? tri.A.x : tri.B.x;
+            maxx = (maxx     > tri.C.x )? maxx     : tri.C.x;
+
+            minx = (tri.A.x < tri.B.x )? tri.A.x : tri.B.x;
+            minx = (minx     < tri.C.x )? minx     : tri.C.x;
+
+            maxy = (tri.A.y > tri.B.y )? tri.A.y : tri.B.y;
+            maxy = (maxy     > tri.C.y )? maxy     : tri.C.y;
+
+            miny = (tri.A.y < tri.B.y )? tri.A.y : tri.B.y;
+            miny = (miny     < tri.C.y )? miny     : tri.C.y;
+
+            // check for intersection
+
+            for(float x = minx * buf.width; x < maxx * buf.width; x++)
             {
-                bool hit = tri.intersection(x * stepx, y * stepy);
-                if(hit)
+                for(float y = miny * buf.height; y < maxy * buf.height; y++)
                 {
-                    buf.write(x,y, tri.color, 1);
+                    hit test = tri.intersection(x * stepx, y * stepy);
+                    if(test.isHit)
+                    {
+                        float depth = (tri.A.z * test.areas.x) + (tri.B.z * test.areas.y) + (tri.C.z * test.areas.z);
+
+                        color diffuse = (tri.colA * test.areas.x) +
+                                (tri.colB * test.areas.y) +
+                                (tri.colC * test.areas.z);
+                        if(i == 0 || depth < buf.depth[(int)(buf.width * y + x)] || !depthTestEnabled)
+                        {
+                            buf.write(x,y, diffuse, depth);
+                        }
+                    }
                 }
             }
         }
