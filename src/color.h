@@ -4,7 +4,6 @@
 
 
 struct color{
-public:
     unsigned int argb;
 
     color operator*(float multiplier);

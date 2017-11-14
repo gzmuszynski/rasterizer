@@ -1,21 +1,30 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
-
+#include "maths.h"
 #include "color.h"
+#include <string>
+#include <vector>
 
-/*        C
+/*        B
  *       /\
  *      /  \
- *  AC /    \ BC
+ *  AB /    \ BC
  *    /      \
  *   /________\
- *  A    AB    B
+ *  A    AC    C
  */
 
 
-struct float3
+
+struct vertex
 {
-    float x,y,z;
+    vertex(float x, float y, float z): pos(x,y,z) { }
+    float3 pos;
+    float3 norm;
+    float3 uv;
+    color  col;
+
+    vertex operator*=(mat4 matrix);
 };
 
 struct hit{
@@ -25,15 +34,13 @@ struct hit{
 
 struct triangle
 {
-    float3 A,B,C;
+    vertex *A,*B,*C;
 
-    color colA;
-    color colB;
-    color colC;
-
+    triangle(vertex *A, vertex *B, vertex *C);
     hit intersection(float x, float y);
 };
 
+std::vector<std::string> split(std::string string, char separator);
 
 
 #endif // TRIANGLE_H
