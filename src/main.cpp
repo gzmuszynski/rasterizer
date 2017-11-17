@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        scanline renderer(1080,1080);
+        scanline renderer(1920,1080);
         renderer.render();
     }
     return 0;

@@ -5,6 +5,7 @@
 struct mesh
 {
     mesh(std::string filename);
+    mesh(float a, float b, float c);
     std::vector<vertex*> vertices;
     std::vector<triangle*> triangles;
 };

@@ -16,8 +16,8 @@ mesh::mesh(std::string filename)
 
     std::string line;
 
-    std::vector<float3> normals;
-    std::vector<float3> texcoords;
+    std::vector<float4> normals;
+    std::vector<float4> texcoords;
     std::vector<color>  colors;
 
     while(!file.eof())
@@ -40,7 +40,7 @@ mesh::mesh(std::string filename)
             }
             else if(first == "vn")
             {
-                float3 n = {std::stof(vstrings[1]),
+                float4 n = {std::stof(vstrings[1]),
                             std::stof(vstrings[2]),
                             std::stof(vstrings[3])};
 
@@ -48,7 +48,7 @@ mesh::mesh(std::string filename)
             }
             else if(first == "vt")
             {
-                float3 t = {std::stof(vstrings[1]),
+                float4 t = {std::stof(vstrings[1]),
                             std::stof(vstrings[2]),
                             std::stof(vstrings[3])};
 
@@ -75,13 +75,13 @@ mesh::mesh(std::string filename)
                 vertex *b  = vertices [stoi(vs2[0])-1];
                 vertex *c  = vertices [stoi(vs3[0])-1];
 
-                float3 an = normals  [stoi(vs1[2])-1];
-                float3 bn = normals  [stoi(vs1[2])-1];
-                float3 cn = normals  [stoi(vs1[2])-1];
+                float4 an = normals  [stoi(vs1[2])-1];
+                float4 bn = normals  [stoi(vs1[2])-1];
+                float4 cn = normals  [stoi(vs1[2])-1];
 
-                float3 at = texcoords[stoi(vs1[1])-1];
-                float3 bt = texcoords[stoi(vs1[1])-1];
-                float3 ct = texcoords[stoi(vs1[1])-1];
+                float4 at = texcoords[stoi(vs1[1])-1];
+                float4 bt = texcoords[stoi(vs1[1])-1];
+                float4 ct = texcoords[stoi(vs1[1])-1];
 
                 a->norm = an; b->norm = bn; c->norm = cn;
                 a->uv   = at; b->uv   = bt; c->uv   = ct;
@@ -106,4 +106,31 @@ mesh::mesh(std::string filename)
             }
         }
     }
+}
+
+mesh::mesh(float a, float b, float c)
+{
+
+    vertex *R = new vertex(a,0.0f,0.0f);
+    vertex *T = new vertex(0.0f,b,0.0f);
+    vertex *B = new vertex(0.0f,0.0f,c);
+    vertex *L = new vertex(0.0f,0.0f,0.0f);
+
+    R->col = 0xFFFF0000;
+    T->col = 0xFF00FF00;
+    L->col = 0xFF0000FF;
+    B->col = 0xFFFFFFFF;
+
+    vertices.push_back(R);
+    vertices.push_back(T);
+    vertices.push_back(B);
+    vertices.push_back(L);
+
+    triangle *front  = new triangle(L,T,R);
+    triangle *side   = new triangle(B,T,L);
+    triangle *bottom = new triangle(B,L,R);
+
+    triangles.push_back(front);
+    triangles.push_back(side);
+    triangles.push_back(bottom);
 }

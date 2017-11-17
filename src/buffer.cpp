@@ -5,7 +5,7 @@ void buffer::clear()
     for(int x = 0; x < width; x++){
         for(int y = 0; y < height; y++){
             diffuse[(width*y)+x] = 0x00000000;
-            depth[(width*y)+x] = 0;
+            depth[(width*y)+x] = 1.0f;
         }
     }
 }
@@ -24,7 +24,7 @@ void buffer::clearDepth()
 {
     for(int x = 0; x < width; x++){
         for(int y = 0; y < height; y++){
-            depth[(width*y)+x] = 0;
+            depth[(width*y)+x] = 1.0f;
         }
     }
 }

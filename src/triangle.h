@@ -19,17 +19,18 @@
 struct vertex
 {
     vertex(float x, float y, float z): pos(x,y,z) { }
-    float3 pos;
-    float3 norm;
-    float3 uv;
+    float4 pos;
+    float4 norm;
+    float4 uv;
     color  col;
 
     vertex operator*=(mat4 matrix);
+    vertex operator/=(float a);
 };
 
 struct hit{
     bool isHit;
-    float3 areas;
+    float4 areas;
 };
 
 struct triangle
@@ -38,6 +39,7 @@ struct triangle
 
     triangle(vertex *A, vertex *B, vertex *C);
     hit intersection(float x, float y);
+
 };
 
 std::vector<std::string> split(std::string string, char separator);

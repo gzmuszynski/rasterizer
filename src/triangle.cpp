@@ -2,6 +2,14 @@
 #include "color.h"
 #include <sstream>
 
+/*        C
+ *       /\
+ *      /  \
+ *  AC /    \ BC
+ *    /      \
+ *   /________\
+ *  A    AB    B
+ */
 
 triangle::triangle(vertex *A, vertex *B, vertex *C): A(A), B(B), C(C)
 {
@@ -12,17 +20,28 @@ hit triangle::intersection(float x, float y)
 {
     hit value = {false, {0.0f, 0.0f, 0.0f} };
 
-    float AB = (x - A->pos.x) * (B->pos.y - A->pos.y) - (B->pos.x - A->pos.x) * (y - A->pos.y); // P1, P2, P
-    float BC = (x - B->pos.x) * (C->pos.y - B->pos.y) - (C->pos.x - B->pos.x) * (y - B->pos.y); // P2, P3, P
-    float CA = (x - C->pos.x) * (A->pos.y - C->pos.y) - (A->pos.x - C->pos.x) * (y - C->pos.y); // P3, P1, P
+    float BCy = B->pos.y - C->pos.y;
+    float CBx = C->pos.x - B->pos.x;
+    float ACx = A->pos.x - C->pos.x;
+    float CAy = C->pos.y - A->pos.y;
 
-    value.isHit = AB > 0 && BC > 0 && CA > 0;
+    float xc =  x - C->pos.x;
+    float yc =  y - C->pos.y;
+
+    float AB = (A->pos.x - B->pos.x) * (y - A->pos.y) - (A->pos.y - B->pos.y) * (x - A->pos.x); // P1, P2, P
+    float BC = (-CBx) * (y - B->pos.y) - (BCy) * (x - B->pos.x); // P2, P3, P
+    float CA = (-ACx) * (yc) - (CAy) * (xc); // P3, P1, P
+
+    value.isHit = AB >= 0 && BC >= 0 && CA >= 0;
     if( value.isHit )
     {
-        float Area = 1.0/((C->pos.x - A->pos.x) * (B->pos.y - A->pos.y) - (B->pos.x - A->pos.x) * (C->pos.y - A->pos.y));
-        value.areas.x = BC*Area;
-        value.areas.y = CA*Area;
-        value.areas.z = AB*Area;
+        float L1 = ((BCy * xc) + (CBx * yc)) / ((BCy *  ACx)  + (CBx * (-CAy)));
+        float L2 = ((CAy * xc) + (ACx * yc)) / ((CAy *(-CBx)) + (ACx *   BCy));
+        float L3 = 1 - L1 - L2;
+
+        value.areas.x = L1;
+        value.areas.y = L2;
+        value.areas.z = L3;
 
     }
     return value;
@@ -50,5 +69,11 @@ std::vector<std::string> split(std::string string, char separator)
 vertex vertex::operator*=(mat4 matrix)
 {
     pos*=matrix;
+    return *this;
+}
+
+vertex vertex::operator/=(float a)
+{
+    pos/=a;
     return *this;
 }
