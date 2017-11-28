@@ -26,7 +26,7 @@ void serializer::bufferToTGA(buffer buf)
         for(int x = 0; x < buf.width; x++)
             {
                 color diffuse = buf.diffuse[(buf.width*y)+x];           // color data extraction in 0xAARRGGBB format
-                unsigned int dint = 127 - (127* buf.depth[(buf.width*y)+x]);    // depth float to unsigned int cast
+                unsigned int dint = 255 - (255 * buf.depth[(buf.width*y)+x]);    // depth float to unsigned int cast
                 unsigned int depth = dint+(dint<<8)+(dint<<16)+(dint<<24); // depth unsigned int to 0xAARRGGBB construction
 
                 colorFile.write((const char*)&diffuse, sizeof(unsigned int)); // write color to file

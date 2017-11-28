@@ -1,6 +1,6 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
-#include "maths.h"
+#include "light.h"
 #include "color.h"
 #include <string>
 #include <vector>
@@ -24,7 +24,7 @@ struct vertex
     float4 uv;
     color  col;
 
-    vertex operator*=(mat4 matrix);
+    vertex transform(mat4 matrix, mat4 matrixT);
     vertex operator/=(float a);
 };
 
