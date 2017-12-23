@@ -12,13 +12,17 @@ public:
     triangle* tri;
     std::vector<light*> lights;
 
+    void forwardMVP(mat4 M, mat4 V, mat4 P);
+
 private:
     bool depthTestEnabled = true;
 
     color shader(hit test);
-
     void minmax(float &minx, float &miny, float &maxx, float &maxy);
 
+    mat4 M;
+    mat4 V;
+    mat4 P;
 
 //    image* texture;
 

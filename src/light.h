@@ -12,10 +12,9 @@ struct light
     color diffuse;
     color specular;
 
-    float4 getVector(float4 to);
+    float attenuation = 0.0f;
 
-    light operator*=(mat4 matrix);
-    light operator/=(float a);
+    float4 getVector(float4 to);
 };
 
 #endif // LIGHT_H

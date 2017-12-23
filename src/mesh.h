@@ -14,4 +14,11 @@ struct mesh
     float4 Sv = {1.0f, 1.0f, 1.0f};
 };
 
+struct material
+{
+    color amb;
+    color diff;
+    color spec;
+};
+
 #endif // MESH_H

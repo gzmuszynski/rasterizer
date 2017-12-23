@@ -8,19 +8,3 @@ float4 light::getVector(float4 to)
         return float4(to, orig);
 }
 
-light light::operator*=(mat4 matrix)
-{
-    orig*=matrix;
-    orig/=orig.w;
-
-    dir*=matrix;
-    dir/=dir.w;
-    return *this;
-}
-
-light light::operator/=(float a)
-{
-    orig/=a;
-    dir/=a;
-    return *this;
-}

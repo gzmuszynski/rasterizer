@@ -1,4 +1,6 @@
 #include "fragmentprocessor.h"
+#include <stdio.h>
+#include <iostream>
 
 void fragmentProcessor::fillTriangle(buffer &buf)
 {
@@ -36,32 +38,50 @@ void fragmentProcessor::fillTriangle(buffer &buf)
     }
 }
 
+void fragmentProcessor::forwardMVP(mat4 M, mat4 V, mat4 P)
+{
+    this->M = M;
+    this->V = V;
+    this->P = P;
+}
+
 color fragmentProcessor::shader(hit test)
 {
     color ambMat = (tri->A->col*test.areas[0] + tri->B->col*test.areas[1] + tri->C->col*test.areas[2]);
     color final = {0xFF000000};
     color ambient = {0}, diffuse = {0}, specular = {0};
 
-    float4 point (tri->A->pos  * test.areas[0] + tri->B->pos  * test.areas[1] + tri->C->pos  * test.areas[2]);
+    float4 point (tri->A->pos2  * test.areas[0] + tri->B->pos2  * test.areas[1] + tri->C->pos2  * test.areas[2]);
+
     float4 normal(tri->A->norm * test.areas[0] + tri->B->norm * test.areas[1] + tri->C->norm * test.areas[2]);
     normal = normal.normalize();
 
     for(int i = 0; i < lights.size(); i++)
     {
         light *l1 = lights[i];
-
         ambient + l1->ambient;
 
-        float4 lightVec = l1->getVector(point).normalize();
+        float4 lightVec = l1->getVector(point);
+        float dist = lightVec.len2();
+        lightVec = lightVec.normalize();
+        float attenuation = 1.0f / (1.0f  + (dist*l1->attenuation));
 
         float LdotN = std::min(float4::dotProduct( lightVec, normal),1.0f);
-        diffuse + (ambMat * l1->diffuse * std::max(0.0f,LdotN)); // lambertian
+        diffuse + (ambMat * l1->diffuse * attenuation * std::max(0.0f,LdotN)); // lambertian
 
-        specular + l1->specular;
+        float4 viewVec = -(point.normalize());
+        float4 halfVec = (viewVec+-lightVec).normalize();
+
+        float NdotH = std::max(0.0f,-float4::dotProduct(halfVec,normal));
+        float shininess = 60.5f;
+
+        specular + (l1->specular * std::pow(NdotH, shininess));
         final = final + ambient + diffuse + specular;
+
+//        final = (color{0xFFFFFFFF} * ((lightVec*float4(0.5,0.5,0.5,1))+float4(0.5,0.5,0.5,0))); // light viewing debug
     }
 //                final = (color{0xFFFFFFFF} * ((normal*float4(0.5,0.5,0.5,1))+float4(0.5,0.5,0.5,0))); // normal viewing debug
-    //            diffuse = (color{0xFFFFFFFF} * ((point*float4(0.5,0.5,1.0,1))+float4(0.5,0.5,0.0,0))); // point viewing debug
+//                final = (color{0xFFFFFFFF} * ((point*float4(0.5,0.5,1.0,1))+float4(0.5,0.5,0.0,0))); // point viewing debug
 
 
     return final;

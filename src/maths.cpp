@@ -36,6 +36,76 @@ mat4 mat4::transpose()
     return M;
 }
 
+mat4 mat4::inverse()
+{
+    mat4 inv;
+
+    inv.mat[0][0] = mat[1][1] * mat[2][2] * mat[3][3] - mat[1][1] * mat[2][3] * mat[3][2] - mat[2][1] * mat[1][2] * mat[3][3] +
+                    mat[2][1] * mat[1][3] * mat[3][2] + mat[3][1] * mat[1][2] * mat[2][3] - mat[3][1] * mat[1][3] * mat[2][2];
+
+    inv.mat[1][0] =-mat[1][0] * mat[2][2] * mat[3][3] + mat[1][0] * mat[2][3] * mat[3][2] + mat[2][0] * mat[1][2] * mat[3][3] -
+                    mat[2][0] * mat[1][3] * mat[3][2] - mat[3][0] * mat[1][2] * mat[2][3] + mat[3][0] * mat[1][3] * mat[2][2];
+
+    inv.mat[2][0] = mat[1][0] * mat[2][1] * mat[3][3] - mat[1][0] * mat[2][3] * mat[3][1] - mat[2][0] * mat[1][1] * mat[3][3] +
+                    mat[2][0] * mat[1][3] * mat[3][1] + mat[3][0] * mat[1][1] * mat[2][3] - mat[3][0] * mat[1][3] * mat[2][1];
+
+    inv.mat[3][0] =-mat[1][0] * mat[2][1] * mat[3][2] + mat[1][0] * mat[2][2] * mat[3][1] +mat[2][0]  * mat[1][1] * mat[3][2] -
+                    mat[2][0] * mat[1][2] * mat[3][1] - mat[3][0] * mat[1][1] * mat[2][2] + mat[3][0] * mat[1][2] * mat[2][1];
+
+    inv.mat[0][1] =-mat[0][1] * mat[2][2] * mat[3][3] + mat[0][1] * mat[2][3] * mat[3][2] + mat[2][1] * mat[0][2] * mat[3][3] -
+                    mat[2][1] * mat[0][3] * mat[3][2] - mat[3][1] * mat[0][2] * mat[2][3] + mat[3][1] * mat[0][3] * mat[2][2];
+
+    inv.mat[1][1] = mat[0][0] * mat[2][2] * mat[3][3] - mat[0][0] * mat[2][3] * mat[3][2] - mat[2][0] * mat[0][2] * mat[3][3] +
+                    mat[2][0] * mat[0][3] * mat[3][2] + mat[3][0] * mat[0][2] * mat[2][3] - mat[3][0] * mat[0][3] * mat[2][2];
+
+    inv.mat[2][1] =-mat[0][0] * mat[2][1] * mat[3][3] + mat[0][0] * mat[2][3] * mat[3][1] + mat[2][0] * mat[0][1] * mat[3][3] -
+                    mat[2][0] * mat[0][3] * mat[3][1] - mat[3][0] * mat[0][1] * mat[2][3] + mat[3][0] * mat[0][3] * mat[2][1];
+
+    inv.mat[3][1] = mat[0][0] * mat[2][1] * mat[3][2] - mat[0][0] * mat[2][2] * mat[3][1] - mat[2][0] * mat[0][1] * mat[3][2] +
+                    mat[2][0] * mat[0][2] * mat[3][1] + mat[3][0] * mat[0][1] * mat[2][2] - mat[3][0] * mat[0][2] * mat[2][1];
+
+    inv.mat[0][2] = mat[0][1] * mat[1][2] * mat[3][3] - mat[0][1] * mat[1][3] * mat[3][2] - mat[1][1] * mat[0][2] * mat[3][3] +
+                    mat[1][1] * mat[0][3] * mat[3][2] + mat[3][1] * mat[0][2] * mat[1][3] - mat[3][1] * mat[0][3] * mat[1][2];
+
+    inv.mat[1][2] =-mat[0][0] * mat[1][2] * mat[3][3] + mat[0][0] * mat[1][3] * mat[3][2] + mat[1][0] * mat[0][2] * mat[3][3] -
+                    mat[1][0] * mat[0][3] * mat[3][2] - mat[3][0] * mat[0][2] * mat[1][3] + mat[3][0] * mat[0][3] * mat[1][2];
+
+    inv.mat[2][2] = mat[0][0] * mat[1][1] * mat[3][3] - mat[0][0] * mat[1][3] * mat[3][1] - mat[1][0] * mat[0][1] * mat[3][3] +
+                    mat[1][0] * mat[0][3] * mat[3][1] + mat[3][0] * mat[0][1] * mat[1][3] - mat[3][0] * mat[0][3] * mat[1][1];
+
+    inv.mat[3][2] =-mat[0][0] * mat[1][1] * mat[3][2] + mat[0][0] * mat[1][2] * mat[3][1] + mat[1][0] * mat[0][1] * mat[3][2] -
+                    mat[1][0] * mat[0][2] * mat[3][1] - mat[3][0] * mat[0][1] * mat[1][2] + mat[3][0] * mat[0][2] * mat[1][1];
+
+    inv.mat[0][3] =-mat[0][1] * mat[1][2] * mat[2][3] + mat[0][1] * mat[1][3] * mat[2][2] + mat[1][1] * mat[0][2] * mat[2][3] -
+                    mat[1][1] * mat[0][3] * mat[2][2] - mat[2][1] * mat[0][2] * mat[1][3] + mat[2][1] * mat[0][3] * mat[1][2];
+
+    inv.mat[1][3] = mat[0][0] * mat[1][2] * mat[2][3] - mat[0][0] * mat[1][3] * mat[2][2] - mat[1][0] * mat[0][2] * mat[2][3] +
+                    mat[1][0] * mat[0][3] * mat[2][2] + mat[2][0] * mat[0][2] * mat[1][3] - mat[2][0] * mat[0][3] * mat[1][2];
+
+    inv.mat[2][3] =-mat[0][0] * mat[1][1] * mat[2][3] + mat[0][0] * mat[1][3] * mat[2][1] + mat[1][0] * mat[0][1] * mat[2][3] -
+                    mat[1][0] * mat[0][3] * mat[2][1] - mat[2][0] * mat[0][1] * mat[1][3] + mat[2][0] * mat[0][3] * mat[1][1];
+
+    inv.mat[3][3] = mat[0][0] * mat[1][1] * mat[2][2] - mat[0][0] * mat[1][2] * mat[2][1] - mat[1][0] * mat[0][1] * mat[2][2] +
+                    mat[1][0] * mat[0][2] * mat[2][1] + mat[2][0] * mat[0][1] * mat[1][2] - mat[2][0] * mat[0][2] * mat[1][1];
+
+    float det = mat[0][0] * inv.mat[0][0] + mat[0][1] * inv.mat[1][0] + mat[0][2] * inv.mat[2][0] + mat[0][3] * inv.mat[3][0];
+
+    if (det == 0)
+        return *this;
+
+    det = 1.0 / det;
+
+    for(int x = 0; x < 4; x++)
+    {
+        for(int y = 0; y < 4; y++)
+        {
+            inv.mat[x][y] *= det;
+        }
+    }
+
+    return inv;
+}
+
 
 
 float4 float4::operator*=(mat4 matrix)

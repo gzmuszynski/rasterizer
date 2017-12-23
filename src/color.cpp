@@ -48,6 +48,18 @@ color color::operator=(unsigned int argb)
 
 color color::operator+(color value)
 {
-    this->argb += value.argb;
+    float div = 1.0f/2;
+
+    float a = ((float)value.alfa() + alfa() );
+    float r = ((float)value.red()  + red()  );
+    float g = ((float)value.green()+ green());
+    float b = ((float)value.blue() + blue() );
+
+    a = std::min(255.0f,std::max(0.0f,a));
+    r = std::min(255.0f,std::max(0.0f,r));
+    g = std::min(255.0f,std::max(0.0f,g));
+    b = std::min(255.0f,std::max(0.0f,b));
+
+    this->argb = ((unsigned int)a<<24)+((unsigned int)r<<16)+((unsigned int)g<<8)+((unsigned int)b);
     return *this;
 }

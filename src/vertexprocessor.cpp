@@ -75,30 +75,50 @@ void vertexProcessor::perspective(float fov, float ratio, float near, float far)
     ratio = 1.0f/ratio;
 
     mat4 Per = {{{f*ratio,     0,        0,               0                },
-               {0,         f,        0,               0                },
-               {0,         0,        (far+near)*f_n,  (2*far*near)*f_n },
-               {0,         0,        -1,              0                }}};
+                 {0,         f,        0,               0                },
+                 {0,         0,        (far+near)*f_n,  (2*far*near)*f_n },
+                 {0,         0,        -1,              0                }}};
     P = Per;
 }
 
 void vertexProcessor::transform()
 {
-    mat4 MVP = P*V*M;
-    mat4 MVT = MVP.transpose();
-
-    for(int i = 0; i < vertexBuffer.size(); i++)
-    {
-        vertexBuffer[i]->transform(MVP,MVT);
-
-//        std::cout << vertexBuffer[i]->pos.x << " "
-//                  << vertexBuffer[i]->pos.y << " "
-//                  << vertexBuffer[i]->pos.z << " "
-//                  << vertexBuffer[i]->pos.w << std::endl;
-    }
+    MV = V*M;
+    MVP = P*MV;
+    MVT = MV.inverse().transpose();
 
     for(int i = 0; i < lightBuffer.size(); i++)
     {
-        lightBuffer[i]->operator*=(MVP);
-
+        lightBuffer[i]->orig*=(MV);
+        lightBuffer[i]->dir*=(MVT);
     }
+
+    for(int i = 0; i < vertexBuffer.size(); i++)
+    {
+
+        shader(vertexBuffer[i]);
+        //        vertexBuffer[i]->transform(MVP,MV,MVT);
+
+        //        std::cout << vertexBuffer[i]->pos.x << " "
+        //                  << vertexBuffer[i]->pos.y << " "
+        //                  << vertexBuffer[i]->pos.z << " "
+        //                  << vertexBuffer[i]->pos.w << std::endl;
+    }
+
+
+}
+
+void vertexProcessor::shader(vertex *v)
+{
+    float4 pos = v->pos;
+    pos*=MV;
+
+    v->pos*=MVP;
+    v->pos/=v->pos.w;
+    v->pos2=pos;
+    v->norm*=MVT;
+//    for(int i = 0; i < lightBuffer.size(); i++)
+//    {
+//        v->lights.push_back(lightBuffer[i]->getVector(pos));
+//    }
 }

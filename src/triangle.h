@@ -20,12 +20,10 @@ struct vertex
 {
     vertex(float x, float y, float z): pos(x,y,z) { }
     float4 pos;
+    float4 pos2;
     float4 norm;
     float4 uv;
     color  col;
-
-    vertex transform(mat4 matrix, mat4 matrixT);
-    vertex operator/=(float a);
 };
 
 struct hit{

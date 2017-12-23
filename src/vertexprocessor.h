@@ -22,10 +22,15 @@ public:
     std::vector<light*>  lightBuffer;
 
     void transform();
+    void shader(vertex* v);
 private:
     mat4 M;
     mat4 V;
     mat4 P;
+
+    mat4 MV;
+    mat4 MVT;
+    mat4 MVP;
 
 };
 

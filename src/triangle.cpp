@@ -20,6 +20,8 @@ hit triangle::intersection(float x, float y)
 {
     hit value = {false, {0.0f, 0.0f, 0.0f} };
 
+    float ABy = A->pos.y - B->pos.y;
+    float ABx = A->pos.x - B->pos.x;
     float BCy = B->pos.y - C->pos.y;
     float CBx = C->pos.x - B->pos.x;
     float ACx = A->pos.x - C->pos.x;
@@ -28,11 +30,17 @@ hit triangle::intersection(float x, float y)
     float xc =  x - C->pos.x;
     float yc =  y - C->pos.y;
 
-    double AB = (A->pos.x - B->pos.x) * (y - A->pos.y) - (A->pos.y - B->pos.y) * (x - A->pos.x); // P1, P2, P
-    double BC = (-CBx) * (y - B->pos.y) - (BCy) * (x - B->pos.x); // P2, P3, P
+    double AB = ( ABx) * (y - A->pos.y) - ABy * (x - A->pos.x); // P1, P2, P
+    double BC = (-CBx) * (y - B->pos.y) - BCy * (x - B->pos.x); // P2, P3, P
     double CA = (-ACx) * (yc) - (CAy) * (xc); // P3, P1, P
 
-    value.isHit = AB >= 0 && BC >= 0 && CA >= 0;
+    bool tl1 = ABy > 0 || (ABy == 0 && ABx < 0);
+    bool tl2 = BCy > 0 || (BCy == 0 && CBx > 0);
+    bool tl3 = CAy > 0 || (CAy == 0 && ACx > 0);
+
+    value.isHit = ((AB > 0 || (AB == 0 && tl1)) &&
+                   (BC > 0 || (BC == 0 && tl2)) &&
+                   (CA > 0 || (CA == 0 && tl3)));
     if( value.isHit )
     {
         double L1 = ((BCy * xc) + (CBx * yc)) / ((BCy *  ACx)  + (CBx * (-CAy)));
@@ -64,20 +72,4 @@ std::vector<std::string> split(std::string string, char separator)
     }
 
     return seglist;
-}
-
-vertex vertex::transform(mat4 matrix, mat4 matrixT)
-{
-    pos*=matrix;
-    pos/=pos.w;
-    norm*=matrixT;
-    norm/=norm.w;
-    return *this;
-}
-
-vertex vertex::operator/=(float a)
-{
-    pos/=a;
-    norm/=a;
-    return *this;
 }

@@ -44,5 +44,6 @@ struct mat4{
 
     mat4 operator*(mat4 N);
     mat4 transpose();
+    mat4 inverse();
 
 };
