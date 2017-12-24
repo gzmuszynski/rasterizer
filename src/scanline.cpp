@@ -16,7 +16,7 @@ void scanline::render()
 {
     std::vector<mesh> objects;
 
-    objects.push_back(mesh("boxyuv.obj"));
+    objects.push_back(mesh("boxy.obj"));
 //    objects.push_back(mesh(1.0f, 1.0f, 1.0f));
 //    objects[1].Tv = {-0.5f,-0.5f,0.85f};
 

@@ -28,7 +28,7 @@ texture::texture(std::string filename)
         bitmap.close();
     }
     wrap = REPEAT;
-    filter = NEAREST;
+    filter = LINEAR;
 }
 
 color texture::sample(float s, float t)
@@ -54,7 +54,28 @@ color texture::sample(float s, float t)
     }
     if(filter == LINEAR)
     {
+        float uR = u-std::floor(u);
+        float vR = v-std::floor(v);
+        float uR1 = 1-uR;
+        float vR1 = 1-vR;
 
+        int u1,v1;
+        if(wrap == CLAMP)
+        {
+            u1 = std::max(0.0f,std::min(u-1, width-1.0f));
+            v1 = std::max(0.0f,std::min(v-1,height-1.0f));
+        }
+        if(wrap == REPEAT)
+        {
+            u1 = u-1; u1 %= width;
+            v1 = v-1; v1 %= height;
+        }
+        color texSample11 = bitmap[(int)u + (int)v*width] * uR;
+        color texSample12 = bitmap[(int)u + (int)v1*width] * uR;
+        color texSample21 = bitmap[(int)u1 + (int)v*width] * uR1;
+        color texSample22 = bitmap[(int)u1 + (int)v1*width] * uR1;
+
+        texSample = (texSample11 + texSample21)*vR + (texSample12 + texSample22) * vR1;
     }
     return texSample;
 }
