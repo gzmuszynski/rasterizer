@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <iterator>
+#include <map>
 
 
 mesh::mesh(std::string filename)
@@ -12,13 +13,18 @@ mesh::mesh(std::string filename)
 
     file.open(filename);
 
-    std::cout << "file is opened? " << file.is_open() << std::endl;
+    std::cout << (file.is_open()? "File opened: " : "Couldn't open file: ") << filename << std::endl;
 
     std::string line;
 
     std::vector<float4> normals;
     std::vector<float4> texcoords;
     std::vector<color>  colors;
+
+    std::map<std::string,material*> materials;
+
+    material* curMat = new material;
+
 
     while(!file.eof())
     {
@@ -29,6 +35,14 @@ mesh::mesh(std::string filename)
         if(!vstrings.empty())
         {
             std::string first = vstrings[0];
+            if(first == "mtllib")
+            {
+                materials = mtl(vstrings[1]);
+            }
+            if(first == "usemtl")
+            {
+                curMat = materials[vstrings[1]];
+            }
             if(first == "v")
             {
                 vertex *v = new vertex(std::stof(vstrings[2]),
@@ -76,17 +90,18 @@ mesh::mesh(std::string filename)
                 vertex *c  = vertices [stoi(vs3[0])-1];
 
                 float4 an = normals  [stoi(vs1[2])-1];
-                float4 bn = normals  [stoi(vs1[2])-1];
-                float4 cn = normals  [stoi(vs1[2])-1];
+                float4 bn = normals  [stoi(vs2[2])-1];
+                float4 cn = normals  [stoi(vs3[2])-1];
 
                 float4 at = texcoords[stoi(vs1[1])-1];
-                float4 bt = texcoords[stoi(vs1[1])-1];
-                float4 ct = texcoords[stoi(vs1[1])-1];
+                float4 bt = texcoords[stoi(vs2[1])-1];
+                float4 ct = texcoords[stoi(vs3[1])-1];
 
                 a->norm = an; b->norm = bn; c->norm = cn;
                 a->uv   = at; b->uv   = bt; c->uv   = ct;
 
                 triangle *t = new triangle(a, b, c);
+                t->mat = curMat;
                 triangles.push_back(t);
             }
             else if(first == "cf")
@@ -133,4 +148,106 @@ mesh::mesh(float a, float b, float c)
     triangles.push_back(front);
     triangles.push_back(side);
     triangles.push_back(bottom);
+}
+std::map<std::string, material *> mesh::mtl(std::string filename)
+{
+    std::map<std::string, material*> matLib;
+    std::ifstream file;
+
+    file.open(filename);
+
+    std::cout << (file.is_open()? "File opened: " : "Couldn't open file: ") << filename << std::endl;
+
+    std::string line;
+
+    std::string curMat;
+
+    while(!file.eof())
+    {
+        std::getline(file, line);
+
+        std::vector<std::string> vstrings = split(line,' ');
+
+        if(!vstrings.empty())
+        {
+            std::string first = vstrings[0];
+            if(first == "newmtl")
+            {
+                curMat = vstrings[1];
+                matLib[curMat] = new material;
+                matLib[curMat]->name = curMat;
+            }
+            else if(first == "\tKa")
+            {
+                color R = color{0xFFFF0000} * std::stof(vstrings[1]);
+                color G = color{0xFF00FF00} * std::stof(vstrings[2]);
+                color B = color{0xFF0000FF} * std::stof(vstrings[3]);
+                matLib[curMat]->ambient = R + G + B;
+            }
+            else if(first == "\tKd")
+            {
+                color R = color{0xFFFF0000} * std::stof(vstrings[1]);
+                color G = color{0xFF00FF00} * std::stof(vstrings[2]);
+                color B = color{0xFF0000FF} * std::stof(vstrings[3]);
+                matLib[curMat]->diffuse = R + G + B;
+            }
+            else if(first == "\tKs")
+            {
+                color R = color{0xFFFF0000} * std::stof(vstrings[1]);
+                color G = color{0xFF00FF00} * std::stof(vstrings[2]);
+                color B = color{0xFF0000FF} * std::stof(vstrings[3]);
+                matLib[curMat]->specular = R + G + B;
+            }
+            else if(first == "\tKe")
+            {
+                color R = color{0xFFFF0000} * std::stof(vstrings[1]);
+                color G = color{0xFF00FF00} * std::stof(vstrings[2]);
+                color B = color{0xFF0000FF} * std::stof(vstrings[3]);
+                matLib[curMat]->shininess = R + G + B;
+            }
+            else if(first == "\tmap_Ka")
+            {
+                std::string filename = vstrings[1];
+                texture* bitmap = new texture(filename);
+                matLib[curMat]->ambientTexture = bitmap;
+            }
+            else if(first == "\tmap_Kd")
+            {
+                std::string filename = vstrings[1];
+                texture* bitmap = new texture(filename);
+                matLib[curMat]->diffuseTexture = bitmap;
+            }
+            else if(first == "\tmap_Ks")
+            {
+                std::string filename = vstrings[1];
+                texture* bitmap = new texture(filename);
+                matLib[curMat]->specularTexture = bitmap;
+            }
+            else if(first == "\tmap_Ke")
+            {
+                std::string filename = vstrings[1];
+                texture* bitmap = new texture(filename);
+                matLib[curMat]->shininessTexture = bitmap;
+            }
+            else if(first == "#")
+            {
+                std::cout << line << std::endl;
+            }
+        }
+
+    }
+    return matLib;
+}
+std::vector<std::string> split(std::string string, char separator)
+{
+    std::stringstream test(string);
+    std::string segment;
+    std::vector<std::string> seglist;
+
+    while(std::getline(test, segment, separator))
+    {
+        seglist.push_back(segment);
+    }
+
+    return seglist;
 }

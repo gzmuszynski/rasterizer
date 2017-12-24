@@ -16,7 +16,7 @@ void scanline::render()
 {
     std::vector<mesh> objects;
 
-    objects.push_back(mesh("boxy.obj"));
+    objects.push_back(mesh("boxyuv.obj"));
 //    objects.push_back(mesh(1.0f, 1.0f, 1.0f));
 //    objects[1].Tv = {-0.5f,-0.5f,0.85f};
 
@@ -28,11 +28,13 @@ void scanline::render()
     l1->ambient  = 0x00000000;
     l1->specular = 0x00000000;
     l1->diffuse  = 0xFFFF0000;
-    light* l2 = new light(float4(0.0,0.5,0.5,1),float4(1,0,0));
-    l2->ambient  = 0xFF161616;
+    light* l2 = new light(float4(0.0,0.5,0.5,1),float4(0,-1,0));
+    l2->ambient  = 0xFFFFFFFF;
     l2->specular = 0xFFFFFFFF;
     l2->diffuse  = 0xFFFFFFFF;
     l2->attenuation = 2.0f;
+    l2->cutoff = 90;
+    l2->exp = 2.0f;
 
     std::vector<light*> lights;
 //    lights.push_back(l1);

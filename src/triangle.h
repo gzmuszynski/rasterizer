@@ -4,6 +4,7 @@
 #include "color.h"
 #include <string>
 #include <vector>
+#include "material.h"
 
 /*        B
  *       /\
@@ -34,13 +35,13 @@ struct hit{
 struct triangle
 {
     vertex *A,*B,*C;
+    material* mat;
 
     triangle(vertex *A, vertex *B, vertex *C);
     hit intersection(float x, float y);
 
 };
 
-std::vector<std::string> split(std::string string, char separator);
 
 
 #endif // TRIANGLE_H

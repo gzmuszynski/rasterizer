@@ -1,6 +1,5 @@
 #include "triangle.h"
 #include "color.h"
-#include <sstream>
 
 /*        C
  *       /\
@@ -45,11 +44,15 @@ hit triangle::intersection(float x, float y)
     {
         double L1 = ((BCy * xc) + (CBx * yc)) / ((BCy *  ACx)  + (CBx * (-CAy)));
         double L2 = ((CAy * xc) + (ACx * yc)) / ((CAy *(-CBx)) + (ACx *   BCy));
-        double L3 = 1 - L1 - L2;
+        double L3 = (1 - L1 - L2);
 
-        value.areas.x = L1;
-        value.areas.y = L2;
-        value.areas.z = L3;
+        double L1w = L1;
+        double L2w = L2;
+        double L3w = L3;
+
+        value.areas.x = L1w;
+        value.areas.y = L2w;
+        value.areas.z = L3w;
 
     }
     return value;
@@ -60,16 +63,4 @@ hit triangle::intersection(float x, float y)
 //return ((c.x - a.x) * (b.y - a.y) - (b.x - a.x) * (c.y - a.y)>= 0);
 //}
 
-std::vector<std::string> split(std::string string, char separator)
-{
-    std::stringstream test(string);
-    std::string segment;
-    std::vector<std::string> seglist;
 
-    while(std::getline(test, segment, separator))
-    {
-        seglist.push_back(segment);
-    }
-
-    return seglist;
-}

@@ -226,7 +226,7 @@ float4 float4::operator/=(float a)
     y*=a;
     z*=a;
     x*=a;
-    w*=a;
+    w=a;
 
     return *this;
 }

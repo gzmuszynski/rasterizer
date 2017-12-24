@@ -47,37 +47,56 @@ void fragmentProcessor::forwardMVP(mat4 M, mat4 V, mat4 P)
 
 color fragmentProcessor::shader(hit test)
 {
-    color ambMat = (tri->A->col*test.areas[0] + tri->B->col*test.areas[1] + tri->C->col*test.areas[2]);
+    material* mat = tri->mat;
+
+    double f1 = test.areas[0] * tri->A->pos.w;
+    double f2 = test.areas[1] * tri->B->pos.w;
+    double f3 = test.areas[2] * tri->C->pos.w;
+
+    double div = 1.0f/ (f1 + f2 + f3);
+
+    f1 *= div;
+    f2 *= div;
+    f3 *= div;
+
+
     color final = {0xFF000000};
     color ambient = {0}, diffuse = {0}, specular = {0};
 
-    float4 point (tri->A->pos2  * test.areas[0] + tri->B->pos2  * test.areas[1] + tri->C->pos2  * test.areas[2]);
-
-    float4 normal(tri->A->norm * test.areas[0] + tri->B->norm * test.areas[1] + tri->C->norm * test.areas[2]);
+    float4 point (tri->A->pos2 * test.areas[0] + tri->B->pos2 * test.areas[1] + tri->C->pos2 * test.areas[2]);
+    float4 normal(tri->A->norm * f1 + tri->B->norm * f2 + tri->C->norm * f3);
     normal = normal.normalize();
+
+    float s = tri->A->uv.x * f1 + tri->B->uv.x * f2 + tri->C->uv.x * f3;
+    float t = tri->A->uv.y * f1 + tri->B->uv.y * f2 + tri->C->uv.y * f3;
 
     for(int i = 0; i < lights.size(); i++)
     {
         light *l1 = lights[i];
-        ambient + l1->ambient;
+        ambient + l1->ambient * mat->ambient * mat->ambientTexture->sample(s,t);
 
         float4 lightVec = l1->getVector(point);
-        float dist = lightVec.len2();
+        float attenuation = l1->getAttenuation(lightVec);
+
         lightVec = lightVec.normalize();
-        float attenuation = 1.0f / (1.0f  + (dist*l1->attenuation));
 
         float LdotN = std::min(float4::dotProduct( lightVec, normal),1.0f);
-        diffuse + (ambMat * l1->diffuse * attenuation * std::max(0.0f,LdotN)); // lambertian
+        diffuse + (l1->diffuse * attenuation * std::max(0.0f,LdotN) * mat->diffuse * mat->diffuseTexture->sample(s,t)); // lambertian
 
         float4 viewVec = -(point.normalize());
         float4 halfVec = (viewVec+-lightVec).normalize();
 
         float NdotH = std::max(0.0f,-float4::dotProduct(halfVec,normal));
-        float shininess = 60.5f;
+        float shininessR = (mat->shininess.red()   * mat->shininessTexture->sample(s,t).red()  *(1.0f/255));
+        float shininessG = (mat->shininess.green() * mat->shininessTexture->sample(s,t).green()*(1.0f/255));
+        float shininessB = (mat->shininess.blue()  * mat->shininessTexture->sample(s,t).blue() *(1.0f/255));
 
-        specular + (l1->specular * std::pow(NdotH, shininess));
+        specular + (l1->specular * ((color{0xFFFF0000} * std::pow(NdotH, shininessR)) +
+                                    (color{0xFF00FF00} * std::pow(NdotH, shininessG)) +
+                                    (color{0xFF0000FF} * std::pow(NdotH, shininessB)))
+                    * mat->specular * mat->specularTexture->sample(s,t));
         final = final + ambient + diffuse + specular;
-
+//        final = ((color{0xFFFF0000} * s) +  (color{0xFF00FF00} * t)); // uv viewing debug
 //        final = (color{0xFFFFFFFF} * ((lightVec*float4(0.5,0.5,0.5,1))+float4(0.5,0.5,0.5,0))); // light viewing debug
     }
 //                final = (color{0xFFFFFFFF} * ((normal*float4(0.5,0.5,0.5,1))+float4(0.5,0.5,0.5,0))); // normal viewing debug
