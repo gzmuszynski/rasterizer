@@ -1,6 +1,12 @@
 #include "texture.h"
 #include <fstream>
 
+texture::texture()
+{
+    width  = 0;
+    height = 0;
+}
+
 texture::texture(std::string filename)
 {
     std::ifstream bitmap(filename, std::ios::binary);
@@ -27,7 +33,7 @@ texture::texture(std::string filename)
         }
         bitmap.close();
     }
-    wrap = REPEAT;
+    wrap = CLAMP;
     filter = LINEAR;
 }
 
@@ -36,6 +42,9 @@ color texture::sample(float s, float t)
     color texSample = color{0xFFFFFFFF};
 
     float u,v;
+
+    if(height == 0 || width == 0)
+        return color{0xFFFFFFFF};
 
     if(wrap == CLAMP)
     {

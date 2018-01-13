@@ -19,7 +19,7 @@
 
 struct vertex
 {
-    vertex(float x, float y, float z): pos(x,y,z) { }
+    vertex(double x, double y, double z): pos(x,y,z) { }
     float4 pos;
     float4 pos2;
     float4 norm;
@@ -38,7 +38,8 @@ struct triangle
     material* mat;
 
     triangle(vertex *A, vertex *B, vertex *C);
-    hit intersection(float x, float y);
+    hit intersection(double x, double y);
+    hit intersectionCos(float x, float y);
 
 };
 

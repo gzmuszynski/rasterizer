@@ -87,25 +87,29 @@ void vertexProcessor::transform()
     MVP = P*MV;
     MVT = MV.inverse().transpose();
 
-    for(int i = 0; i < lightBuffer.size(); i++)
-    {
-        lightBuffer[i]->orig*=(MV);
-        lightBuffer[i]->dir*=(MVT);
-    }
-
     for(int i = 0; i < vertexBuffer.size(); i++)
     {
 
         shader(vertexBuffer[i]);
-        //        vertexBuffer[i]->transform(MVP,MV,MVT);
 
-        //        std::cout << vertexBuffer[i]->pos.x << " "
-        //                  << vertexBuffer[i]->pos.y << " "
-        //                  << vertexBuffer[i]->pos.z << " "
-        //                  << vertexBuffer[i]->pos.w << std::endl;
+//                std::cout << vertexBuffer[i]->pos.x << " "
+//                          << vertexBuffer[i]->pos.y << " "
+//                          << vertexBuffer[i]->pos.z << " "
+//                          << vertexBuffer[i]->pos.w << std::endl;
     }
 
 
+}
+
+void vertexProcessor::transformLight()
+{
+    mat4 VT = V.inverse().transpose();
+
+    for(int i = 0; i < lightBuffer.size(); i++)
+    {
+        lightBuffer[i]->orig*=(V);
+        lightBuffer[i]->dir*=(VT);
+    }
 }
 
 void vertexProcessor::shader(vertex *v)
@@ -117,8 +121,6 @@ void vertexProcessor::shader(vertex *v)
     v->pos/=v->pos.w;
     v->pos2=pos;
     v->norm*=MVT;
-//    for(int i = 0; i < lightBuffer.size(); i++)
-//    {
-//        v->lights.push_back(lightBuffer[i]->getVector(pos));
-//    }
+
+
 }

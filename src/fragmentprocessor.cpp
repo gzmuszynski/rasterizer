@@ -1,29 +1,50 @@
 #include "fragmentprocessor.h"
 #include <stdio.h>
 #include <iostream>
+//#define NOMINMAX
 
 void fragmentProcessor::fillTriangle(buffer &buf)
 {
-    float stepx = 1.0/buf.width;
-    float stepy = 1.0/buf.height;
+    double stepx = 2.0/buf.width;
+    double stepy = 2.0/buf.height;
 
-    float maxx, minx, maxy, miny;  // min-max for basic rendertime saving
+    double maxx, minx, maxy, miny;  // min-max for basic rendertime saving
+//#ifdef NOMINMAX
+//    minx = -1;
+//    miny = -1;
+//    maxx = 1;
+//    maxy = 1;
+//#endif
+//#ifndef NOMINMAX
     minmax(minx, miny, maxx, maxy);
-
+//#endif
     // check for intersection
 
-    for(float x = minx; x < maxx; x += stepx)
+    int minix = (minx+1)*buf.width*0.5;
+    int maxix = (maxx+1)*buf.width*0.5;
+    int miniy = (miny+1)*buf.height*0.5;
+    int maxiy = (maxy+1)*buf.height*0.5;
+
+    for(int x1 = minix; x1 < maxix; x1++)
     {
-        for(float y = miny; y < maxy; y += stepy)
+        double x = (x1*stepx)-1;
+
+        for(int y1 = miniy; y1 < maxiy; y1++)
         {
+            double y = (y1*stepy)-1;
+#ifdef FISHEYE
+            hit test = tri->intersectionCos( x, y );
+#endif
+#ifndef FISHEYE
             hit test = tri->intersection( x, y );
+#endif
             if(test.isHit)
             {
                 float depth = (tri->A->pos.z * test.areas.x) + (tri->B->pos.z * test.areas.y) + (tri->C->pos.z * test.areas.z);
 
                 if(depth >= 0 && depth <= 1)
                 {
-                    int x1 = (x+1) * buf.width * 0.5f, y1 = (y+1) * buf.height * 0.5f;
+//                    int x1 = (x+1) * buf.width * 0.5f, y1 = (y+1) * buf.height * 0.5f;
                     bool test2 = (depth < buf.depth[(int)(buf.width * y1 + x1)]);
                     bool test3 = buf.depth[(int)(buf.width * y1 + x1)] == 1;
                     if(test2 || test3 || !depthTestEnabled)
@@ -106,7 +127,7 @@ color fragmentProcessor::shader(hit test)
     return final;
 }
 
-void fragmentProcessor::minmax(float &minx, float &miny, float &maxx, float &maxy)
+void fragmentProcessor::minmax(double &minx, double &miny, double &maxx, double &maxy)
 {
     maxy = (tri->A->pos.y > tri->B->pos.y ) ? tri->A->pos.y : tri->B->pos.y;
     maxx = (tri->A->pos.x > tri->B->pos.x ) ? tri->A->pos.x : tri->B->pos.x;

@@ -4,6 +4,7 @@
 #include <algorithm>
 
 #endif // MATH_H
+
 struct mat4;
 
 struct float4

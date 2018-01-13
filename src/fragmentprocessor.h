@@ -18,7 +18,7 @@ private:
     bool depthTestEnabled = true;
 
     color shader(hit test);
-    void minmax(float &minx, float &miny, float &maxx, float &maxy);
+    void minmax(double &minx, double &miny, double &maxx, double &maxy);
 
     mat4 M;
     mat4 V;

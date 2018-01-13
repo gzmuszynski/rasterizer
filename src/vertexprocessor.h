@@ -22,6 +22,7 @@ public:
     std::vector<light*>  lightBuffer;
 
     void transform();
+    void transformLight();
     void shader(vertex* v);
 private:
     mat4 M;

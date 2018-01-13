@@ -16,19 +16,24 @@ void scanline::render()
 {
     std::vector<mesh> objects;
 
-    objects.push_back(mesh("boxy.obj"));
-//    objects.push_back(mesh(1.0f, 1.0f, 1.0f));
-//    objects[1].Tv = {-0.5f,-0.5f,0.85f};
+    objects.push_back(mesh("planetest.obj"));
+//    objects.push_back(mesh("fishtest.obj"));
+    objects[0].Sv = {0.025f,0.025f,0.025f};
+//    objects[0].Rv = {90.0f,0.0f,0.0f};
+//    objects.push_back(mesh("sphere.obj"));
+//        objects[0].Rv = {0.0f,0.0f,0.0f};
+//    objects[1].Tv = {0.0f,-1.0f,1.0f};
+//    objects[1].Sv = {0.5f,0.5f,0.5f};
 
     float4 up    (0.0f, 1.0f, 0.0f);
-    float4 eye   (0.0f, -0.0f, -0.8f);
-    float4 target(0.0f, 0.0f, 0.0f);
+    float4 eye   (0.0f, -0.0f, -0.0f);
+    float4 target(0.0f, 0.0f, 1.0f);
 
-    light* l1 = new light(float4(1.0,0.0,0.0,1),float4(0,1,0));
-    l1->ambient  = 0x00000000;
+    light* l1 = new light(float4(0.0,0.0,0.0,1),float4(0,1,0));
+    l1->ambient  = 0xFFFFFFFF;
     l1->specular = 0x00000000;
-    l1->diffuse  = 0xFFFF0000;
-    light* l2 = new light(float4(0.0,0.5,0.5,1),float4(0,-1,0));
+    l1->diffuse  = 0xFFFFFFFF;
+    light* l2 = new light(float4(0.0,0.5,-1.5,1),float4(0,-1,0));
     l2->ambient  = 0xFFFFFFFF;
     l2->specular = 0xFFFFFFFF;
     l2->diffuse  = 0xFFFFFFFF;
@@ -37,16 +42,17 @@ void scanline::render()
     l2->exp = 2.0f;
 
     std::vector<light*> lights;
-//    lights.push_back(l1);
-    lights.push_back(l2);
+    lights.push_back(l1);
+//    lights.push_back(l2);
 
     //VERTEX PROCESSOR BEGIN
 
     clock_t begin = std::clock();
 
     vp.lookAt(up,eye,target);
-    vp.perspective(60.0f, buf.width*1.0f/buf.height, 0.5, 2);
+    vp.perspective(80.0f, buf.width*1.0f/buf.height, 0.5, 1.5);
 
+    vp.transformLight();
     for(int o = 0; o < objects.size(); o++)
     {
 

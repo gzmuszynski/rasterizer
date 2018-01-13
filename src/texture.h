@@ -7,6 +7,7 @@ enum WRAP   : char {CLAMP, REPEAT};
 
 struct texture
 {
+    texture();
     texture(std::string filename);
 
     color sample(float s, float t);

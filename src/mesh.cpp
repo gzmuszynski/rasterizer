@@ -176,6 +176,11 @@ std::map<std::string, material *> mesh::mtl(std::string filename)
                 curMat = vstrings[1];
                 matLib[curMat] = new material;
                 matLib[curMat]->name = curMat;
+
+                matLib[curMat]->ambientTexture = new texture();
+                matLib[curMat]->diffuseTexture = new texture();
+                matLib[curMat]->specularTexture = new texture();
+                matLib[curMat]->shininessTexture = new texture();
             }
             else if(first == "\tKa")
             {
