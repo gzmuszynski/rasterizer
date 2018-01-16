@@ -19,7 +19,7 @@ void scanline::render()
     objects.push_back(mesh("boxy.obj",col)); //draw object
     objects[0].Tv = float4(0.0f,0.0f,0.0f); //translate vector
     objects[0].Rv = float4(0.0f,0.0f,0.0f); //rotate vector
-    objects[0].Sv = float4(0.0f,0.0f,0.0f); //scale vector
+    objects[0].Sv = float4(1.0f,1.0f,1.0f); //scale vector
 
     float4 up    (0.0f, 1.0f, 0.0f);
     float4 eye   (0.0f, -0.0f, -0.8f);

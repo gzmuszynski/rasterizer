@@ -15,7 +15,6 @@ SOURCES += src/main.cpp \
     src/vertexprocessor.cpp \
     src/fragmentprocessor.cpp \
     src/fragmentprocessor.cpp \
-    src/texture.cpp \
     src/light.cpp
 
 HEADERS += \
@@ -28,6 +27,4 @@ HEADERS += \
     src/mesh.h \
     src/vertexprocessor.h \
     src/fragmentprocessor.h \
-    src/texture.h \
-    src/light.h \
-    src/material.h
+    src/light.h

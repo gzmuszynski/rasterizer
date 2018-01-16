@@ -19,12 +19,6 @@ mesh::mesh(std::string filename, color col)
 
     std::vector<float4> normals;
     std::vector<float4> texcoords;
-    std::vector<color>  colors;
-
-    std::map<std::string,material*> materials;
-
-    material* curMat = new material;
-
 
     while(!file.eof())
     {
@@ -35,14 +29,6 @@ mesh::mesh(std::string filename, color col)
         if(!vstrings.empty())
         {
             std::string first = vstrings[0];
-            if(first == "mtllib")
-            {
-                materials = mtl(vstrings[1]);
-            }
-            if(first == "usemtl")
-            {
-                curMat = materials[vstrings[1]];
-            }
             if(first == "v")
             {
                 vertex *v = new vertex(std::stof(vstrings[2]),
@@ -88,16 +74,10 @@ mesh::mesh(std::string filename, color col)
 
                 a->norm = an; b->norm = bn; c->norm = cn;
                 a->uv   = at; b->uv   = bt; c->uv   = ct;
-
-
+                a->col  = col;b->col  = col;c->col  = col;
 
                 triangle *t = new triangle(a, b, c);
 
-                t->A->col = col;
-                t->B->col = col;
-                t->C->col = col;
-
-                t->mat = curMat;
                 triangles.push_back(t);
             }
             else if(first == "#")
@@ -134,100 +114,7 @@ mesh::mesh(float a, float b, float c)
     triangles.push_back(side);
     triangles.push_back(bottom);
 }
-std::map<std::string, material *> mesh::mtl(std::string filename)
-{
-    std::map<std::string, material*> matLib;
-    std::ifstream file;
 
-    file.open(filename);
-
-    std::cout << (file.is_open()? "File opened: " : "Couldn't open file: ") << filename << std::endl;
-
-    std::string line;
-
-    std::string curMat;
-
-    while(!file.eof())
-    {
-        std::getline(file, line);
-
-        std::vector<std::string> vstrings = split(line,' ');
-
-        if(!vstrings.empty())
-        {
-            std::string first = vstrings[0];
-            if(first == "newmtl")
-            {
-                curMat = vstrings[1];
-                matLib[curMat] = new material;
-                matLib[curMat]->name = curMat;
-
-                matLib[curMat]->ambientTexture = new texture();
-                matLib[curMat]->diffuseTexture = new texture();
-                matLib[curMat]->specularTexture = new texture();
-                matLib[curMat]->shininessTexture = new texture();
-            }
-            else if(first == "\tKa")
-            {
-                color R = color{0xFFFF0000} * std::stof(vstrings[1]);
-                color G = color{0xFF00FF00} * std::stof(vstrings[2]);
-                color B = color{0xFF0000FF} * std::stof(vstrings[3]);
-                matLib[curMat]->ambient = R + G + B;
-            }
-            else if(first == "\tKd")
-            {
-                color R = color{0xFFFF0000} * std::stof(vstrings[1]);
-                color G = color{0xFF00FF00} * std::stof(vstrings[2]);
-                color B = color{0xFF0000FF} * std::stof(vstrings[3]);
-                matLib[curMat]->diffuse = R + G + B;
-            }
-            else if(first == "\tKs")
-            {
-                color R = color{0xFFFF0000} * std::stof(vstrings[1]);
-                color G = color{0xFF00FF00} * std::stof(vstrings[2]);
-                color B = color{0xFF0000FF} * std::stof(vstrings[3]);
-                matLib[curMat]->specular = R + G + B;
-            }
-            else if(first == "\tKe")
-            {
-                color R = color{0xFFFF0000} * std::stof(vstrings[1]);
-                color G = color{0xFF00FF00} * std::stof(vstrings[2]);
-                color B = color{0xFF0000FF} * std::stof(vstrings[3]);
-                matLib[curMat]->shininess = R + G + B;
-            }
-            else if(first == "\tmap_Ka")
-            {
-                std::string filename = vstrings[1];
-                texture* bitmap = new texture(filename);
-                matLib[curMat]->ambientTexture = bitmap;
-            }
-            else if(first == "\tmap_Kd")
-            {
-                std::string filename = vstrings[1];
-                texture* bitmap = new texture(filename);
-                matLib[curMat]->diffuseTexture = bitmap;
-            }
-            else if(first == "\tmap_Ks")
-            {
-                std::string filename = vstrings[1];
-                texture* bitmap = new texture(filename);
-                matLib[curMat]->specularTexture = bitmap;
-            }
-            else if(first == "\tmap_Ke")
-            {
-                std::string filename = vstrings[1];
-                texture* bitmap = new texture(filename);
-                matLib[curMat]->shininessTexture = bitmap;
-            }
-            else if(first == "#")
-            {
-                std::cout << line << std::endl;
-            }
-        }
-
-    }
-    return matLib;
-}
 std::vector<std::string> split(std::string string, char separator)
 {
     std::stringstream test(string);
