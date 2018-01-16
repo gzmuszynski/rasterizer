@@ -16,14 +16,10 @@ void scanline::render()
 {
     std::vector<mesh> objects;
     color col = {0xFFFFFFFF};
-    objects.push_back(mesh("boxy.obj",col));
-//    objects.push_back(mesh("fishtest.obj"));
-//    objects[0].Sv = {0.025f,0.025f,0.025f};
-//    objects[0].Rv = {90.0f,0.0f,0.0f};
-//    objects.push_back(mesh("sphere.obj"));
-//        objects[0].Rv = {0.0f,0.0f,0.0f};
-//    objects[1].Tv = {0.0f,-1.0f,1.0f};
-//    objects[1].Sv = {0.5f,0.5f,0.5f};
+    objects.push_back(mesh("boxy.obj",col)); //draw object
+    objects[0].Tv = float4(0.0f,0.0f,0.0f); //translate vector
+    objects[0].Rv = float4(0.0f,0.0f,0.0f); //rotate vector
+    objects[0].Sv = float4(0.0f,0.0f,0.0f); //scale vector
 
     float4 up    (0.0f, 1.0f, 0.0f);
     float4 eye   (0.0f, -0.0f, -0.8f);
