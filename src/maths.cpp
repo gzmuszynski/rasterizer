@@ -188,7 +188,7 @@ float4 float4::normalize()
     float length = len2();
     if(length!=0)
     {
-        length = invSqrt(length);
+        length = 1.0f/std::sqrt(length);
         y*=length;
         z*=length;
         x*=length;
@@ -239,22 +239,4 @@ float float4::len()
 float float4::len2()
 {
     return (x*x)+(y*y)+(z*z);
-}
-
-float float4::invSqrt(float n)
-{
-
-    long i;
-    float x2, y;
-    const float threehalfs = 1.5F;
-
-    x2 = n * 0.5F;
-    y  = n;
-    i  = * ( long * ) &y;                       // evil floating point bit level hacking
-    i  = 0x5f3759df - ( i >> 1 );               // what the fuck?
-    y  = * ( float * ) &i;
-    y  = y * ( threehalfs - ( x2 * y * y ) );   // 1st iteration
-    //      y  = y * ( threehalfs - ( x2 * y * y ) );   // 2nd iteration, this can be removed
-
-    return y;
 }

@@ -15,10 +15,10 @@ scanline::scanline(int width, int height)
 void scanline::render()
 {
     std::vector<mesh> objects;
-
-    objects.push_back(mesh("planetest.obj"));
+    color col = {0xFFFFFFFF};
+    objects.push_back(mesh("boxy.obj",col));
 //    objects.push_back(mesh("fishtest.obj"));
-    objects[0].Sv = {0.025f,0.025f,0.025f};
+//    objects[0].Sv = {0.025f,0.025f,0.025f};
 //    objects[0].Rv = {90.0f,0.0f,0.0f};
 //    objects.push_back(mesh("sphere.obj"));
 //        objects[0].Rv = {0.0f,0.0f,0.0f};
@@ -26,20 +26,17 @@ void scanline::render()
 //    objects[1].Sv = {0.5f,0.5f,0.5f};
 
     float4 up    (0.0f, 1.0f, 0.0f);
-    float4 eye   (0.0f, -0.0f, -0.0f);
+    float4 eye   (0.0f, -0.0f, -0.8f);
     float4 target(0.0f, 0.0f, 1.0f);
 
-    light* l1 = new light(float4(0.0,0.0,0.0,1),float4(0,1,0));
-    l1->ambient  = 0xFFFFFFFF;
-    l1->specular = 0x00000000;
+    light* l1 = new light(float4(0.0,0.5,0.5,1));
+    l1->ambient  = 0xFF222222;
+    l1->specular = 0xFFFFFFFF;
     l1->diffuse  = 0xFFFFFFFF;
-    light* l2 = new light(float4(0.0,0.5,-1.5,1),float4(0,-1,0));
-    l2->ambient  = 0xFFFFFFFF;
+    light* l2 = new light(float4(0.0,0.5,-1.5,1));
+    l2->ambient  = 0xFF111111;
     l2->specular = 0xFFFFFFFF;
     l2->diffuse  = 0xFFFFFFFF;
-    l2->attenuation = 2.0f;
-    l2->cutoff = 90;
-    l2->exp = 2.0f;
 
     std::vector<light*> lights;
     lights.push_back(l1);
@@ -50,9 +47,8 @@ void scanline::render()
     clock_t begin = std::clock();
 
     vp.lookAt(up,eye,target);
-    vp.perspective(80.0f, buf.width*1.0f/buf.height, 0.5, 1.5);
+    vp.perspective(80.0f, buf.width*1.0f/buf.height, 0.5, 2);
 
-    vp.transformLight();
     for(int o = 0; o < objects.size(); o++)
     {
 

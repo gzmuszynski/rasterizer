@@ -46,6 +46,7 @@ void vertexProcessor::rotate(float a, float4 v)
 
 void vertexProcessor::lookAt(float4 up, float4 eye, float4 target)
 {
+    view = eye;
     up = up.normalize();
     float4 forward = float4(eye,target).normalize();
     float4 right   = float4::crossProduct(up,forward).normalize();
@@ -89,38 +90,33 @@ void vertexProcessor::transform()
 
     for(int i = 0; i < vertexBuffer.size(); i++)
     {
-
         shader(vertexBuffer[i]);
-
-//                std::cout << vertexBuffer[i]->pos.x << " "
-//                          << vertexBuffer[i]->pos.y << " "
-//                          << vertexBuffer[i]->pos.z << " "
-//                          << vertexBuffer[i]->pos.w << std::endl;
-    }
-
-
-}
-
-void vertexProcessor::transformLight()
-{
-    mat4 VT = V.inverse().transpose();
-
-    for(int i = 0; i < lightBuffer.size(); i++)
-    {
-        lightBuffer[i]->orig*=(V);
-        lightBuffer[i]->dir*=(VT);
     }
 }
 
 void vertexProcessor::shader(vertex *v)
 {
     float4 pos = v->pos;
-    pos*=MV;
+    float4 N = v->norm;
+
+    color final;
+
+    for(light* l:lightBuffer)
+    {
+        float4 L = l->getVector(pos).normalize();
+
+        color ambient = v->col*l->ambient;
+        color diffuse = v->col*l->diffuse*std::max(0.0f,float4::dotProduct(L,N));
+
+
+        float4 H = (view+L).normalize();
+        float NdotH = float4::dotProduct(N,H);
+
+        color specular = v->col*l->specular*std::pow(std::max(0.0f,NdotH),40);
+        final = ambient+diffuse+specular;
+    }
+    v->col = final;
 
     v->pos*=MVP;
     v->pos/=v->pos.w;
-    v->pos2=pos;
-    v->norm*=MVT;
-
-
 }

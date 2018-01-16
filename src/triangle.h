@@ -21,7 +21,6 @@ struct vertex
 {
     vertex(double x, double y, double z): pos(x,y,z) { }
     float4 pos;
-    float4 pos2;
     float4 norm;
     float4 uv;
     color  col;
@@ -39,7 +38,6 @@ struct triangle
 
     triangle(vertex *A, vertex *B, vertex *C);
     hit intersection(double x, double y);
-    hit intersectionCos(float x, float y);
 
 };
 

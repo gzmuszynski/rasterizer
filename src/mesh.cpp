@@ -7,7 +7,7 @@
 #include <map>
 
 
-mesh::mesh(std::string filename)
+mesh::mesh(std::string filename, color col)
 {
     std::ifstream file;
 
@@ -68,17 +68,6 @@ mesh::mesh(std::string filename)
 
                 texcoords.push_back(t);
             }
-            else if(first == "c")
-            {
-                std::string s = vstrings[1];
-                unsigned int col;
-                std::stringstream ss;
-                ss << std::hex << s;
-                ss >> col;
-                color c = {col};
-
-                colors.push_back(c);
-            }
             else if(first == "f")
             {
                 std::vector<std::string> vs1 = split(vstrings[1], '/');
@@ -100,20 +89,16 @@ mesh::mesh(std::string filename)
                 a->norm = an; b->norm = bn; c->norm = cn;
                 a->uv   = at; b->uv   = bt; c->uv   = ct;
 
+
+
                 triangle *t = new triangle(a, b, c);
+
+                t->A->col = col;
+                t->B->col = col;
+                t->C->col = col;
+
                 t->mat = curMat;
                 triangles.push_back(t);
-            }
-            else if(first == "cf")
-            {
-                std::vector<std::string> cf = split(vstrings[1], '/');
-
-                triangle *t = triangles[stoi(cf[0])-1];
-                color    c = colors   [stoi(cf[1])-1];
-
-                t->A->col = c;
-                t->B->col = c;
-                t->C->col = c;
             }
             else if(first == "#")
             {

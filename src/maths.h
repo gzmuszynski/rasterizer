@@ -30,9 +30,6 @@ struct float4
 
     float len();
     float len2();
-
-
-    float invSqrt(float n); // Quake provided
 };
 
 struct mat4{
