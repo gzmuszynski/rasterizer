@@ -59,7 +59,7 @@ void vertexProcessor::lookAt(float4 up, float4 eye, float4 target)
 
     mat4 Rot = {{{right.x,    right.y,    right.z,    0},
                  {up.x,       up.y,       up.z,       0},
-                 {-forward.x, -forward.y, -forward.z,    0},
+                 {-forward.x, -forward.y, -forward.z, 0},
                  {0,          0,          0,          1}}};
 
     V = Rot*Mov;
@@ -75,7 +75,7 @@ void vertexProcessor::perspective(float fov, float ratio, float near, float far)
     float f = s != 0 ? std::cos(fov) / s : std::cos(fov) / 0.0001f;
     ratio = 1.0f/ratio;
 
-    mat4 Per = {{{f*ratio,     0,        0,               0                },
+    mat4 Per = {{{f*ratio,   0,        0,               0                },
                  {0,         f,        0,               0                },
                  {0,         0,        (far+near)*f_n,  (2*far*near)*f_n },
                  {0,         0,        -1,              0                }}};

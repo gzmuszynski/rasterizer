@@ -4,17 +4,20 @@
 
 void fragmentProcessor::fillTriangle(buffer &buf)
 {
-    double stepx = 2.0/buf.width;
-    double stepy = 2.0/buf.height;
+    int w = buf.width;
+    int h = buf.height;
+
+    double stepx = 2.0/w;
+    double stepy = 2.0/h;
 
     double maxx, minx, maxy, miny;  // min-max for basic rendertime saving
     minmax(minx, miny, maxx, maxy);
     // check for intersection
 
-    int minix = (minx+1)*buf.width*0.5;
-    int maxix = (maxx+1)*buf.width*0.5;
-    int miniy = (miny+1)*buf.height*0.5;
-    int maxiy = (maxy+1)*buf.height*0.5;
+    int minix = std::floor((minx+1)*w*0.5);
+    int maxix = std::ceil((maxx+1)*w*0.5);
+    int miniy = std::floor((miny+1)*h*0.5);
+    int maxiy = std::ceil((maxy+1)*h*0.5);
 
     for(int x1 = minix; x1 < maxix; x1++)
     {
@@ -31,8 +34,8 @@ void fragmentProcessor::fillTriangle(buffer &buf)
                 if(depth >= 0 && depth <= 1)
                 {
 //                    int x1 = (x+1) * buf.width * 0.5f, y1 = (y+1) * buf.height * 0.5f;
-                    bool test2 = (depth < buf.depth[(int)(buf.width * y1 + x1)]);
-                    bool test3 = buf.depth[(int)(buf.width * y1 + x1)] == 1;
+                    bool test2 = (depth < buf.depth[(int)(w * y1 + x1)]);
+                    bool test3 = buf.depth[(int)(w * y1 + x1)] == 1;
                     if(test2 || test3 || !depthTestEnabled)
                     {
                         color pixel = shader(test);

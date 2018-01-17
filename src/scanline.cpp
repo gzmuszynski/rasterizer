@@ -42,12 +42,14 @@ void scanline::render()
 
     clock_t begin = std::clock();
 
-    vp.lookAt(up,eye,target);
-    vp.perspective(80.0f, buf.width*1.0f/buf.height, 0.5, 2);
+
 
     for(int o = 0; o < objects.size(); o++)
     {
+        vp.setIdentity();
 
+        vp.lookAt(up,eye,target);
+        vp.perspective(80.0f, buf.width*1.0f/buf.height, 0.5, 2);
 
         vp.vertexBuffer = objects[o].vertices;
         vp.lightBuffer  = lights;

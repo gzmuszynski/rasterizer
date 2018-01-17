@@ -35,9 +35,9 @@ hit triangle::intersection(double x, double y)
     double BC = (-CBx) * (y - B->pos.y) - BCy * (x - B->pos.x); // P2, P3, P
     double CA = (-ACx) * (yc) - (CAy) * (xc); // P3, P1, P
 
-    bool tl1 = ABy > 0 || (ABy == 0 && ABx > 0);
-    bool tl2 = BCy > 0 || (BCy == 0 && CBx > 0);
-    bool tl3 = CAy > 0 || (CAy == 0 && ACx > 0);
+    bool tl1 = ABy > 0 || (ABy == 0 && ABx < 0);
+    bool tl2 = BCy > 0 || (BCy == 0 && CBx < 0);
+    bool tl3 = CAy > 0 || (CAy == 0 && ACx < 0);
 
     value.isHit = ((AB > 0 || (AB == 0 && tl1)) &&
                    (BC > 0 || (BC == 0 && tl2)) &&
