@@ -99,6 +99,8 @@ void vertexProcessor::shader(vertex *v)
     float4 pos = v->pos;
     float4 N = v->norm;
 
+    pos *= M;
+
     color final;
 
     for(light* l:lightBuffer)
