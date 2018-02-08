@@ -100,6 +100,7 @@ void vertexProcessor::shader(vertex *v)
     float4 N = v->norm;
 
     pos *= M;
+    N *= M.inverse().transpose();
 
     color final;
 
